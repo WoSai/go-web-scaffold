@@ -13,7 +13,7 @@ import (
 type (
 	User struct {
 		ID             string           `validate:"required"`
-		Name           string           `validate:"required"`
+		Username       string           `validate:"required"`
 		HashedPassword []byte           `validate:"required"`
 		Events         *eventbus.Events `validate:"required"`
 	}
@@ -28,7 +28,7 @@ func NewUser(username, password string) (*User, error) {
 		Name:      username,
 		CreatedAt: time.Now(),
 	})
-	entity := &User{ID: id, Name: username, Events: eb}
+	entity := &User{ID: id, Username: username, Events: eb}
 	if err := entity.setPassword(password); err != nil {
 		return nil, err
 	}
