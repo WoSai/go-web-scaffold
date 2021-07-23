@@ -1,6 +1,7 @@
 package user
 
 import (
+	"github.com/go-kit/kit/endpoint"
 	"github.com/wosai/go-web-scaffold/internal/application/user/command"
 	"github.com/wosai/go-web-scaffold/internal/application/user/handler"
 	"github.com/wosai/go-web-scaffold/internal/domain/user"
@@ -9,8 +10,9 @@ import (
 
 type (
 	Application struct {
-		Commands commands
-		Queries  query
+		Commands   commands
+		Queries    query
+		CreateUser endpoint.Endpoint
 	}
 
 	commands struct {
@@ -25,7 +27,8 @@ func BuildApplication(repo user.Repository) *Application {
 		Commands: commands{
 			CreateUser: command.NewCreateUserHandler(repo),
 		},
-		Queries: query{},
+		Queries:    query{},
+		CreateUser: command.MakeCreateUserEndpoint(repo),
 	}
 
 	// subscribe event

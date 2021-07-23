@@ -1,22 +1,39 @@
 package http
 
 import (
+	"context"
+	"encoding/json"
 	"net/http"
 
-	"github.com/go-chi/chi/v5"
-	"github.com/go-chi/chi/v5/middleware"
+	kitlog "github.com/go-kit/kit/log"
+	httptransport "github.com/go-kit/kit/transport/http"
 	"github.com/opentracing/opentracing-go"
+	"github.com/wosai/go-web-scaffold/internal/application/user"
+	"github.com/wosai/go-web-scaffold/internal/application/user/command"
 )
 
-func BuildRouter(tracer opentracing.Tracer) http.Handler {
-	router := chi.NewRouter()
+func commonDecode(ctx context.Context, r *http.Request) (interface{}, error) {
+	v := new(command.CreateUserRequest)
+	err := json.NewDecoder(r.Body).Decode(v)
+	return v, err
+}
 
-	router.Use(middleware.Recoverer)
-	router.Use(Trace(tracer))
+func commonEncode(ctx context.Context, w http.ResponseWriter, v interface{}) error {
+	return json.NewEncoder(w).Encode(v)
+}
 
-	router.Get("/", func(w http.ResponseWriter, r *http.Request) {
-		w.WriteHeader(http.StatusOK)
-		w.Write([]byte("hello wosai"))
-	})
+func BuildRouter(app *user.Application, tracer opentracing.Tracer, logger kitlog.Logger) http.Handler {
+	router := http.NewServeMux()
+
+	options := []httptransport.ServerOption{
+		httptransport.ServerErrorLogger(logger),
+	}
+
+	router.Handle("/", httptransport.NewServer(
+		app.CreateUser,
+		commonDecode,
+		commonEncode,
+		append(options, httptransport.ServerBefore(JaegerHTTPToContext(tracer, "create user", logger)))...,
+	))
 	return router
 }
