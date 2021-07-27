@@ -1,0 +1,33 @@
+{
+    "go.editorContextMenuCommands": {
+        "toggleTestFile": false,
+        "addTags": false,
+        "removeTags": false,
+        "fillStruct": false,
+        "testAtCursor": true,
+        "testFile": false,
+        "testPackage": false,
+        "generateTestForFunction": true,
+        "generateTestForFile": false,
+        "generateTestForPackage": false,
+        "addImport": false,
+        "testCoverage": true,
+        "playground": true,
+        "debugTestAtCursor": true,
+        "benchmarkAtCursor": false
+    },
+    "[go]": {
+        "editor.formatOnSave": true,
+        "editor.defaultFormatter": "golang.go",
+        "editor.codeActionsOnSave": {
+            "source.organizeImports": true
+        }
+    },
+    "go.autocompleteUnimportedPackages": true,
+    "go.formatTool": "goimports",
+    "go.testFlags": ["-v"],
+    "go.lintOnSave": "package",
+    "go.languageServerExperimentalFeatures": {
+        "diagnostics": true
+    }
+}
